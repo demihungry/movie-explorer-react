@@ -35,6 +35,19 @@ function App() {
     fetchMovies(currentPage);
   }, [currentPage, search]);
 
+  const sortedMovies = [...movies].sort((a, b) => {
+    if (sort === 'releaseAsc') {
+      return new Date(a.release_date) - new Date(b.release_date);
+    } else if (sort === 'releaseDesc') {
+      return new Date(b.release_date) - new Date(a.release_date);
+    } else if (sort === 'ratingAsc') {
+      return a.vote_average - b.vote_average;
+    } else if (sort === 'ratingDesc') {
+      return b.vote_average - a.vote_average;
+    }
+    return 0;
+  });
+
   return (
     <div>
       {/* Header */}
@@ -64,10 +77,10 @@ function App() {
 
       {/* Movie List */}
       <div className='movie-list'>
-        {movies.length === 0 ? (
+        {sortedMovies.length === 0 ? (
           <p>No movies found.</p>
         ) : (
-          movies.map(movie => (
+          sortedMovies.map(movie => (
             <div className='movie' key={movie.id}>
               <img src={movie.poster_path
                 ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
