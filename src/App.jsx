@@ -1,7 +1,4 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useState, useEffect } from 'react'
 import "./App.css"
 
 function App() {
@@ -10,6 +7,33 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [movies, setMovies] = useState([]);
+  const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+
+  async function fetchMovies() {
+    try {
+      let url ="";
+      if (search.trim()) {
+        url = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(search)}&page=${currentPage}`;
+      } else {
+        url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${currentPage}`;
+      }
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      setMovies(data.results || []);
+      setTotalPages(Math.min(data.total_pages, 48963) || 1);
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+      setMovies([]);
+      setTotalPages(1);
+    }
+
+  }
+
+  useEffect(() => {
+    fetchMovies(currentPage);
+  }, [currentPage, search]);
 
   return (
     <div>
@@ -45,10 +69,13 @@ function App() {
         ) : (
           movies.map(movie => (
             <div className='movie' key={movie.id}>
-              <img src={movie.posterUrl} alt={movie.title} />
+              <img src={movie.poster_path
+                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                : 'https://via.placeholder.com/170x250?text=No+Image'
+              } alt={movie.title} />
               <h3>{movie.title}</h3>
-              <p>Release Date: {movie.releaseDate}</p>
-              <p>Rating: {movie.rating}</p>
+              <p>Release Date: {movie.release_date || 'N/A'}</p>
+              <p>Rating: {movie.vote_average || 'N/A'}</p>
             </div>
           ))
         )

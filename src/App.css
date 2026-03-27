@@ -35,18 +35,34 @@ body {
     border-radius: 5px;
 }
 
-#movieList {
+.movie-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
-    gap: 15px;
-    padding: 10px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 20px;
+    padding: 10px 12px;
+    justify-items: center;
+    width: min(100%, 1260px);
+    margin: 0 auto;
+}
+
+@media (max-width: 1000px) {
+    .movie-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .movie-list {
+        grid-template-columns: 1fr;
+    }
 }
 
 .movie {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: auto;
-    width: 225px;
+    margin: 0;
+    width: 100%;
+    max-width: 225px;
     height: 400px;
     background-color: rgb(255, 255, 255);
     text-align: center;
